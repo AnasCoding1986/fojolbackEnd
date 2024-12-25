@@ -1,5 +1,6 @@
 const { getStockData } = require("../utils/alphaVantage");
 
+// Fetch multiple stock data for comparison
 const fetchMultipleStockData = async (req, res) => {
   const { symbols, interval } = req.query;
 
