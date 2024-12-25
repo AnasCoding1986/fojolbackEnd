@@ -1,9 +1,9 @@
 const express = require("express");
-const { fetchStockData } = require("../controllers/stockController");
+const { fetchMultipleStockData } = require("../controllers/stockController");
 
 const router = express.Router();
 
-// Route to fetch stock data
-router.get("/", fetchStockData);
+// Route to fetch multiple stock data
+router.get("/compare", fetchMultipleStockData);
 
 module.exports = router;

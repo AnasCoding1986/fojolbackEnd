@@ -1,19 +1,26 @@
 const { getStockData } = require("../utils/alphaVantage");
 
-// Controller function to fetch stock data
-const fetchStockData = async (req, res) => {
-    const { symbol, interval } = req.query;
+const fetchMultipleStockData = async (req, res) => {
+  const { symbols, interval } = req.query;
 
-    if (!symbol || !interval) {
-        return res.status(400).json({ error: "Stock symbol and interval are required." });
-    }
+  if (!symbols || !interval) {
+    return res.status(400).json({ error: "Stock symbols and interval are required." });
+  }
 
-    try {
-        const data = await getStockData(symbol, interval);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  try {
+    const symbolsArray = symbols.split(",");
+    const promises = symbolsArray.map((symbol) => getStockData(symbol, interval));
+    const results = await Promise.all(promises);
+
+    const formattedData = symbolsArray.reduce((acc, symbol, index) => {
+      acc[symbol] = results[index];
+      return acc;
+    }, {});
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-module.exports = { fetchStockData };
+module.exports = { fetchMultipleStockData };
